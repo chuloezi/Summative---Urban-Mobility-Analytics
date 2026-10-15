@@ -213,3 +213,5 @@ Full pseudo-code and complexity analysis are in the separate PDF technical repor
 |------|------|
 | Elvis Mutangana | Data pipeline, database, custom algorithm, documentation |
 | Ezio Munyengango | Backend (Flask API) and frontend dashboard |
+
+Team task allocation and meeting log: [`docs/team_task_sheet.pdf`](docs/team_task_sheet.pdf)
