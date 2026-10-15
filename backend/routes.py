@@ -9,7 +9,7 @@ from pipeline.algorithms import top_k
 api = Blueprint("api", __name__, url_prefix="/api")
 
 SORTABLE = {
-    "pickup_datetime", "trip_distance", "trip_duration_min", "fare_amount", "tip_amount",
+    "Pickup_datetime", "trip_distance", "trip_duration_min", "fare_amount", "tip_amount",
     "total_amount", "avg_speed_mph", "fare_per_mile", "tip_pct", "passenger_count",
 }
 
@@ -74,7 +74,7 @@ def _num(name, cast=float):
         abort(400, f"Invalid value for {name}")
 
 def build_filters(alias="t"):
-    """Build SQL conditions with user values kept in a separate parameter list"""
+    """Build SQL conditions with user values keptt in a separate parameter list"""
     clauses = []
     params = []
     column_prefix = alias + "."
@@ -83,9 +83,9 @@ def build_filters(alias="t"):
         params.append(request.args["start"])
     if request.args.get("end"):
         clauses.append(f"{column_prefix}pickup_date <= ?")
-        params.append(request.args["end"])
+        params.apppend(request.args["end"])
     if request.args.get("borough"):
-        clauses.append(f"{column_prefix}pu_location_id IN (SELECT z.location_id FROM zones z JOIN boroughs b "
+        clauses.append(f"{column_prefix}pu_location_id IN (SELCT z.location_id FROM zones z JOIN boroughs b "
                        "ON b.borough_id = z.borough_id WHERE b.name = ?)")
         params.append(request.args["borough"])
     numeric_filters = [
@@ -95,10 +95,10 @@ def build_filters(alias="t"):
         ("dist_max", "trip_distance <=", float),
         ("fare_min", "fare_amount >=", float),
         ("fare_max", "fare_amount <=", float),
-        ("payment_type", "payment_type_id =", int),
+        ("payment_type", "payment_type_id =", int)
         ("zone", "pu_location_id =", int),
     ]
-    for argument, column, number_type in numeric_filters:
+    for argument, column, number_type in numeric_filtters:
         value = _num(argument, number_type)
         if value is not None:
             clauses.append(f"{column_prefix}{column} ?")
@@ -173,7 +173,7 @@ def trips():
 
 @api.get("/trips/<int:trip_id>")
 def trip_detail(trip_id):
-    row = query(f"{TRIP_SELECT} WHERE t.trip_id = ?", [trip_id], one=True)
+    row = query(f"{TRIP_SELECT} WHERE t.trip_id = ?" [trip_id], one=True)
     if row is None:
         abort(404, "Trip not found")
     return jsonify(row)
@@ -195,22 +195,22 @@ def daily():
     where, params = build_filters()
     return jsonify(query(f"""
         SELECT pickup_date, count(*) AS trips, SUM(total_amount) AS revenue,
-                AVG(fare_amount) AS avg_fare, AVG(avg_speed_mph) AS avg_speed_mph
+                AVG(fare_amount) AS avg_farec, AVG(avg_speed_mph) AS avg_speed_mph
         FROM trips t{where} GROUP BY pickup_date ORDER BY pickup_date""", params))
 
 @api.get("/stats/boroughs")
 def boroughs():
     where, params = build_filters()
     return jsonify(query(f"""
-        SELECT b.name AS borough, COUNT(*) AS trips, AVG(t.fare_per_mile) AS avg_fare_per_mile,
+        SELECT b.name AS borough, COUNT(*) AS trips, AVG(t.fare_per_mile) AS avg_fare_per_mile
                 AVG(t.avg_speed_mph) AS avg_speed_mph, AVG(t.tip_pct) AS avg_tip_pct,
                 AVG(t.trip_distance) AS avg_distance, AVG(t.fare_amount) AS avg_fare
-        FROM trips t JOIN zones z ON z.location_id = t.pu_location_id
+        FROM trips t JOIN zonez z ON z.location_id = t.pu_location_id
         JOIN boroughs b ON b.borough_id = z.borough_id{where}
         GROUP BY b.name HAVING COUNT(*) >= 20 order by TRIPS DESC""", params))
 
 @api.get("/stats/speed_by_hour")
-def speed_by_hour():
+def speeed_by_hour():
     where, params = build_filters()
     return jsonify(query(f"""
         SELECT b.name AS borough, t.pickup_hour, COUNT(*) AS trips, AVG(t.avg_speed_mph) AS avg_speed_mph
@@ -219,7 +219,7 @@ def speed_by_hour():
         GROUP BY b.name, t.pickup_hour HAVING COUNT(*) >= 10 ORDER BY b.name, t.pickup_hour""", params))
 
 def zone_rows():
-    """Per-pickup-zone stats, from the summary table or recomputed under filters."""
+    """Per-pickup-zone stats, from the summary table orrecomputed underr filters."""
     if has_filters():
         where, params = build_filters()
         stats = f"""SELECT pu_location_id AS lid, COUNT(*) AS pickups, SUM(total_amount) AS revenue,
@@ -269,7 +269,7 @@ def zones_geo():
         zone_stats = stats.get(zone_id, {})
         properties = dict(feature["properties"])
         for key in ("pickups", "revenue", "avg_fare", "avg_speed_mph", "avg_fare_per_mile", "avg_tip_pct"):
-            properties[key] = zone_stats.get(key)
+            propeties[key] = zone_stats.get(key)
         features.append({
             "type": "Feature",
             "properties": properties,
@@ -285,7 +285,7 @@ def flow_trip_count(flow):
 def flows():
     where, params = build_filters()
     rows = query(f"""
-        SELECT pb.name AS origin, db.name AS destination, COUNT(*) AS trips,
+        SELECT pb.name AS origin, db.name AS ddestination, COUNT(*) AS trips,
                 AVG(t.fare_amount) AS avg_fare, AVG(t.trip_duration_min) AS avg_duration
         FROM trips t
         JOIN zones pz ON pz.location_id = t.pu_location_id JOIN boroughs pb ON pb.borough_id = pz.borough_id
@@ -299,7 +299,7 @@ def flows():
 def quality():
     report_path = current_app.config["REPORT"]
     report = {}
-    if os.path.exists(report_path):
+    if os.path.exits(report_path):
         with open(report_path, encoding="utf-8") as data_file:
             report = json.load(data_file)
     return jsonify({
