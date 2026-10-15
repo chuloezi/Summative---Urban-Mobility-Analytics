@@ -6,10 +6,6 @@ A full-stack application for exploring New York City yellow taxi trips. Raw TLC 
 
 ▶️ **[Watch the 5-minute walkthrough](VIDEO_LINK_HERE)**
 
-## Documentation
-
-📄 Technical report (PDF): `docs/technical_report.pdf` *(added before submission)*
-
 ---
 
 ## Project Structure
@@ -172,7 +168,7 @@ Indexes on `pickup_date`, `pu_location_id`, `do_location_id` and `pickup_hour` k
 - **quickselect**: k-th smallest value in O(n) average time
 - **percentile / iqr_fences**: quartiles via quickselect, used to detect fare-per-mile outliers
 
-Full pseudo-code and complexity analysis are in the technical report.
+Full pseudo-code and complexity analysis are in the separate PDF technical report.
 
 ---
 
@@ -181,4 +177,4 @@ Full pseudo-code and complexity analysis are in the technical report.
 | Name | Role |
 |------|------|
 | Elvis Mutangana | Data pipeline & database |
-| Chuloezi | Backend & frontend |
+| Ezio Munyengango | Backend & frontend |
