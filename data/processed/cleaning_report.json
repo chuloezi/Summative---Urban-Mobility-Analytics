@@ -1,0 +1,53 @@
+{
+  "period": [
+    "2019-01-01",
+    "2019-02-01"
+  ],
+  "raw_rows": 200000,
+  "kept_rows": 197712,
+  "dropped_rows": 2288,
+  "dropped": {
+    "duplicate": 0,
+    "missing_timestamp": 0,
+    "outside_period": 15,
+    "non_positive_duration": 161,
+    "duration_too_long": 549,
+    "non_positive_distance": 1256,
+    "distance_too_long": 1,
+    "non_positive_fare": 169,
+    "fare_too_high": 0,
+    "impossible_speed": 137,
+    "unknown_location_id": 0
+  },
+  "flagged": {
+    "unknown_zone": 4465,
+    "missing_passenger_count": 3027,
+    "missing_rate_code": 6,
+    "fare_per_mile_outlier": 2517
+  },
+  "fare_per_mile_fences": {
+    "q1": 4.35,
+    "q3": 6.99,
+    "low": -3.570000000000002,
+    "high": 14.910000000000002
+  },
+  "drop_rules": {
+    "duplicate": "Exact duplicate of another record",
+    "missing_timestamp": "Pickup or dropoff timestamp is null",
+    "outside_period": "Pickup falls outside the month covered by the file",
+    "non_positive_duration": "Dropoff is at or before pickup",
+    "duration_too_long": "Trip lasted longer than 6 hours",
+    "non_positive_distance": "Trip distance is zero or negative",
+    "distance_too_long": "Trip distance above 100 miles",
+    "non_positive_fare": "Fare <= 0 or negative total (refunds, voids)",
+    "fare_too_high": "Fare above $500",
+    "impossible_speed": "Average speed above 80 mph",
+    "unknown_location_id": "Pickup or dropoff ID not present in the zone lookup"
+  },
+  "flag_rules": {
+    "unknown_zone": "Pickup or dropoff in zone 264/265 (Unknown / outside NYC)",
+    "missing_passenger_count": "Passenger count null or 0 (set to NULL)",
+    "missing_rate_code": "RatecodeID null or 99 (mapped to Unknown)",
+    "fare_per_mile_outlier": "Fare per mile outside Tukey fences (IQR x 3.0)"
+  }
+}

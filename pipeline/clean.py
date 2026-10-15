@@ -66,7 +66,7 @@ def find_raw_files(raw_dir):
         return None
 
     files = {
-        "trips": first(["*tripdata*.parquet", "*.parquet"]),
+        "trips": first(["*tripdata*.parquet", "*.parquet", "*tripdata*.csv"]),
         "lookup": first(["*zone_lookup*.csv", "*lookup*.csv"]),
         "spatial": first(["*taxi_zones*.geojson", "*taxi_zones*.json", "*.geojson",
                           "*taxi_zones*.zip", "*.zip"]),
@@ -163,8 +163,25 @@ def load_zone_geometry(path, zones):
     return {"type": "FeatureCollection", "features": features}
 
 
+def _read_csv_sample(path, sample=None, chunksize=500_000):
+    """Stream a large trip CSV in chunks, keeping a uniform random sample from each one."""
+    frac = 1.0
+    if sample:
+        with open(path, "rb") as fh:
+            total = sum(1 for _ in fh) - 1
+        frac = min(1.0, sample / total) if total > 0 else 1.0
+        print(f"Sampling {frac:.2%} of {total:,} CSV rows")
+    parts = []
+    for i, chunk in enumerate(pd.read_csv(path, chunksize=chunksize, low_memory=False)):
+        parts.append(chunk.sample(frac=frac, random_state=42 + i) if frac < 1 else chunk)
+    return pd.concat(parts, ignore_index=True)
+
+
 def load_trips(path, sample=None):
-    df = pd.read_parquet(path)
+    if path.lower().endswith(".csv"):
+        df = _read_csv_sample(path, sample)
+    else:
+        df = pd.read_parquet(path)
     df.columns = [c.lower() for c in df.columns]
     df = df.rename(columns={
         "vendorid": "vendor_id",
