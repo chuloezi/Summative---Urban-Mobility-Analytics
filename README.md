@@ -212,7 +212,7 @@ Full pseudo-code and complexity analysis are in the separate PDF technical repor
 | Team Member | Role / Responsibility | Email |
 |-------------|-----------------------|-------|
 | Elvis Mutangana | Data pipeline (cleaning, feature engineering), database design and loading, custom algorithm, documentation | e.mutangana@alustudent.com |
-| Ezio Munyengango | Backend (Flask API) and frontend dashboard | EZIO_EMAIL_HERE |
+| Ezio Munyengango | Backend (Flask API) and frontend dashboard | e.munyengan@alustudent.com |
 
 ### Task Allocation and Tracker
 
