@@ -91,9 +91,10 @@ python backend/app.py
 
 The API runs at `http://localhost:5000`.
 
-### 6. Open the frontend
+### 6. Open the dashboard
 
-With the backend running, open `frontend/index.html` in your browser.
+With the backend running, open **http://localhost:5000** in your browser.
+Flask serves the dashboard and the API from the same address, so do not open `index.html` directly from the file system.
 
 ---
 
@@ -128,7 +129,7 @@ Records that are plausible but questionable are **kept and flagged** (`is_suspic
 | `missing_rate_code` | Rate code null or 99 |
 | `fare_per_mile_outlier` | Fare per mile outside Tukey fences (3 × IQR) |
 
-A summary of every rule and how many rows it affected is written to `data/processed/cleaning_report.json` and the `cleaning_log` table.
+A summary of every rule and how many rows it affected is written to `data/processed/cleaning_report.json` and the `exclusion_log` table.
 
 ### Derived features
 
@@ -150,10 +151,12 @@ SQLite, defined in [`pipeline/Database/schema.sql`](pipeline/Database/schema.sql
 | Table | Purpose |
 |-------|---------|
 | `trips` | One row per cleaned trip (fact table) |
-| `zones` | Taxi zones: borough, zone name, service zone |
+| `boroughs` | The NYC boroughs |
+| `zones` | Taxi zones, linked to their borough |
 | `vendors`, `rate_codes`, `payment_types` | Lookup tables for coded fields |
-| `zone_stats` | Pre-computed pickups, dropoffs and revenue per zone |
-| `cleaning_log` | Every cleaning rule and how many rows it affected |
+| `zone_stats` | Pre-computed pickups, dropoffs, revenue and averages per zone |
+| `hourly_stats`, `daily_stats` | Pre-computed totals by weekday/hour and by day |
+| `exclusion_log` | Every cleaning rule and how many rows it dropped or flagged |
 
 Indexes on `pickup_date`, `pu_location_id`, `do_location_id` and `pickup_hour` keep the dashboard filters fast.
 
@@ -167,6 +170,8 @@ Indexes on `pickup_date`, `pu_location_id`, `do_location_id` and `pickup_hour` k
 - **top_k**: the k largest items in O(n log k) time, O(k) space
 - **quickselect**: k-th smallest value in O(n) average time
 - **percentile / iqr_fences**: quartiles via quickselect, used to detect fare-per-mile outliers
+
+`top_k` powers the dashboard's "Top zones" ranking and borough-to-borough flows (`/api/zones/top`, `/api/flows`).
 
 Full pseudo-code and complexity analysis are in the separate PDF technical report.
 

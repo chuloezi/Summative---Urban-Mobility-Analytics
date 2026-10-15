@@ -1,7 +1,10 @@
 DROP TABLE IF EXISTS zone_stats;
-DROP TABLE IF EXISTS cleaning_log;
+DROP TABLE IF EXISTS hourly_stats;
+DROP TABLE IF EXISTS daily_stats;
+DROP TABLE IF EXISTS exclusion_log;
 DROP TABLE IF EXISTS trips;
 DROP TABLE IF EXISTS zones;
+DROP TABLE IF EXISTS boroughs;
 DROP TABLE IF EXISTS payment_types;
 DROP TABLE IF EXISTS rate_codes;
 DROP TABLE IF EXISTS vendors;
@@ -21,9 +24,14 @@ CREATE TABLE payment_types (
     description     TEXT NOT NULL
 );
 
+CREATE TABLE boroughs (
+    borough_id INTEGER PRIMARY KEY,
+    name       TEXT NOT NULL UNIQUE
+);
+
 CREATE TABLE zones (
     location_id  INTEGER PRIMARY KEY,
-    borough      TEXT NOT NULL,
+    borough_id   INTEGER NOT NULL REFERENCES boroughs (borough_id),
     zone         TEXT NOT NULL,
     service_zone TEXT NOT NULL
 );
@@ -64,15 +72,37 @@ CREATE TABLE trips (
 );
 
 CREATE TABLE zone_stats (
-    location_id INTEGER PRIMARY KEY REFERENCES zones (location_id),
-    pickups     INTEGER NOT NULL,
-    dropoffs    INTEGER NOT NULL,
-    revenue     REAL NOT NULL
+    location_id       INTEGER PRIMARY KEY REFERENCES zones (location_id),
+    pickups           INTEGER NOT NULL,
+    dropoffs          INTEGER NOT NULL,
+    revenue           REAL NOT NULL,
+    avg_fare          REAL,
+    avg_speed_mph     REAL,
+    avg_fare_per_mile REAL,
+    avg_tip_pct       REAL
 );
 
-CREATE TABLE cleaning_log (
-    rule_code     TEXT PRIMARY KEY,
-    rule_type     TEXT NOT NULL CHECK (rule_type IN ('drop', 'flag')),
-    description   TEXT NOT NULL,
-    affected_rows INTEGER NOT NULL
+CREATE TABLE hourly_stats (
+    day_of_week   INTEGER NOT NULL,
+    pickup_hour   INTEGER NOT NULL,
+    trips         INTEGER NOT NULL,
+    avg_speed_mph REAL,
+    avg_fare      REAL,
+    avg_tip_pct   REAL,
+    PRIMARY KEY (day_of_week, pickup_hour)
+);
+
+CREATE TABLE daily_stats (
+    pickup_date   TEXT PRIMARY KEY,
+    trips         INTEGER NOT NULL,
+    revenue       REAL NOT NULL,
+    avg_fare      REAL,
+    avg_speed_mph REAL
+);
+
+CREATE TABLE exclusion_log (
+    rule_code    TEXT PRIMARY KEY,
+    action       TEXT NOT NULL CHECK (action IN ('dropped', 'flagged')),
+    description  TEXT NOT NULL,
+    record_count INTEGER NOT NULL
 );
