@@ -215,3 +215,6 @@ Full pseudo-code and complexity analysis are in the separate PDF technical repor
 | Ezio Munyengango | Backend (Flask API) and frontend dashboard |
 
 Team task allocation and meeting log: [`docs/CTRL Freaks.pdf`](docs/CTRL%20Freaks.pdf)
+
+## PDF Documentation report link
+https://drive.google.com/file/d/1U0DS5nUOvkglICVuzUoWOOzryY0IZKqi/view?usp=sharing
