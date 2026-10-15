@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NYC Mobility Explorer</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Page title and theme button -->
+  <header class="topbar">
+    <div>
+      <h1>NYC Urban Mobility Explorer</h1>
+      <p class="subtitle" id="period-label">Yellow taxi trips</p>
+    </div>
+    <button id="theme-toggle" class="btn ghost" type="button" aria-label="Toggle dark mode">Dark mode</button>
+  </header>
+
+  <!-- Filters read by filters.js -->
+  <form id="filters" class="filters" autocomplete="off">
+    <label>From <input type="date" name="start"></label>
+    <label>To <input type="date" name="end"></label>
+    <label>Pickup borough
+      <select name="borough"><option value="">All</option></select>
+    </label>
+    <label>Hours
+      <span class="pair"><input type="number" name="hour_min" min="0" max="23" placeholder="0">–<input type="number" name="hour_max" min="0" max="23" placeholder="23"></span>
+    </label>
+    <label>Distance (mi)
+      <span class="pair"><input tye="number" name="dist_min" min="0" step="0.1" placeholder="min">–<input type="number" name="dist_max" min="0" step="0.1" placeholder="max"></span>
+    </label>
+    <label>Fare ($)
+      <span class="pair"><input type="number" name="fare_min" min="0" step="1" placeholder="min">–<input type="number" name="fare_max" min="0" step="1" placeholder="max"></span>
+    </label>
+    <label>Payment
+      <select name="payment_type"><option value="">All</option></select>
+    </label>
+    <label class="check"><input type="checkbox" name="clean_only" value="1"> Hide suspicious</label>
+    <div class="filter-actions">
+      <button type="submit" class="btn primary">Apply</button>
+      <button type="reset" class="btn ghost">Reset</button>
+    </div>
+  </form>
+
+  <main>
+    <!-- Summary values filled by main.js -->
+    <section class="kpis" id="kpis" aria-live="polite"></section>
+
+    <section class="grid">
+      <article class="card span-2">
+        <div class="card-head">
+          <div>
+            <!-- Pickup-zone map -->
+            <h2>Where trips start</h2>
+            <p class="note">Pickup zones shaded by the selected metric. Click a zone to see its numbers.</p>
+          </div>
+          <select id="map-metric" aria-label="Map metric">
+            <option value="pickups">Pickups</option>
+            <option value="avg_fare">Average fare</option>
+            <option value="avg_fare_per_mile">Fare per mile</option>
+            <option value="avg_speed_mph">Average speed</option>
+            <option value="avg_tip_pct">Tip % (card)</option>
+          </select>
+        </div>
+        <div class="map-wrap">
+          <div id="map"></div>
+          <aside id="zone-detail" class="zone-detail">
+            <p class="note">Select a zone on the map.</p>
+          </aside>
+        </div>
+        <div id="map-legend" class="legend-ramp"></div>
+      </article>
+
+      <article class="card span-2">
+        <div class="card-head">
+          <div>
+            <!-- Weekday and hour heatmap -->
+            <h2>When the city rides</h2>
+            <p class="note">Trips by pickup hour and weekday. Darker cells mean more trips.</p>
+          </div>
+          <select id="heat-metric" aria-label="Heatmap metric">
+            <option value="trips">Trips</option>
+            <option value="avg_speed_mph">Average speed</option>
+            <option value="avg_fare">Average fare</option>
+            <option value="avg_tip_pct">Tip % (card)</option>
+          </select>
+        </div>
+        <div id="heatmap" class="heatmap"></div>
+      </article>
+
+      <article class="card">
+        <div class="card-head">
+          <div>
+            <!-- Speed chart -->
+            <h2>Traffic speed through the day</h2>
+            <p class="note">Average trip speed (mph) by pickup hour and borough.</p>
+          </div>
+        </div>
+        <div class="chart-box">
+          <canvas id="speed-chart"></canvas>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-head">
+          <div>
+            <!-- Daily trips or revenue chart -->
+            <h2>Daily volume</h2>
+            <p class="note" id="daily-note">Trips per day.</p>
+          </div>
+          <select id="daily-metric" aria-label="Daily metric">
+            <option value="trips">Trips</option>
+            <option value="revenue">Revenue</option>
+          </select>
+        </div>
+        <div class="chart-box">
+          <canvas id="daily-chart"></canvas>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-head">
+          <div>
+            <!-- Borough comparison chart -->
+            <h2>Borough economics</h2>
+            <p class="note">Compare pickup boroughs.</p>
+          </div>
+          <select id="borough-metric" aria-label="Borough metric">
+            <option value="avg_fare_per_mile">Fare per mile ($)</option>
+            <option value="avg_tip_pct">Tip % (card)</option>
+            <option value="avg_speed_mph">Average speed (mph)</option>
+            <option value="avg_distance">Average distance (mi)</option>
+            <option value="trips">Trips</option>
+          </select>
+        </div>
+        <div class="chart-box">
+          <canvas id="borough-chart"></canvas>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-head">
+          <div>
+            <!-- Zone ranking -->
+            <h2>Top zones</h2>
+            <p class="note">Ranked with a custom min-heap (zones with at least 30 pickups).</p>
+          </div>
+          <div class="inline">
+            <select id="top-metric" aria-label="Ranking metric">
+              <option value="pickups">Busiest</option>
+              <option value="revenue">Highest revenue</option>
+              <option value="avg_fare_per_mile">Priciest per mile</option>
+              <option value="avg_tip_pct">Best tippers</option>
+              <option value="slowest">Slowest</option>
+              <option value="fastest">Fastest</option>
+            </select>
+            <select id="top-k" aria-label="How many">
+              <option>5</option>
+              <option selected>10</option>
+              <option>15</option>
+            </select>
+          </div>
+        </div>
+        <ol id="top-zones" class="rank-list"></ol>
+      </article>
+
+      <article class="card">
+        <div class="card-head">
+          <div>
+            <!-- Common routes between boroughs -->
+            <h2>Borough-to-borough flows</h2>
+            <p class="note">Most common origin → destination pairs.</p>
+          </div>
+        </div>
+        <table class="data-table compact">
+          <thead>
+            <tr>
+              <th>Origin</th>
+              <th>Destination</th>
+              <th class="num">Trips</th>
+              <th class="num">Avg fare</th>
+              <th class="num">Avg min</th>
+            </tr>
+          </thead>
+          <tbody id="flows"></tbody>
+        </table>
+      </article>
+
+      <article class="card">
+        <div class="card-head">
+          <div>
+            <!-- Cleaning results -->
+            <h2>Data quality</h2>
+            <p class="note" id="quality-note">Records removed or flagged during cleaning.</p>
+          </div>
+        </div>
+        <div id="quality"></div>
+      </article>
+
+      <article class="card span-2">
+        <div class="card-head">
+          <div>
+            <!-- Sortable trip table -->
+            <h2>Trip records</h2>
+            <p class="note" id="trips-note">Click a column to sort, a row for details.</p>
+          </div>
+        </div>
+        <div class="table-scroll">
+          <table class="data-table" id="trips-table">
+            <thead>
+              <tr>
+              <th data-sort="pickup_datetime">Pickup</th>
+              <th>From</th>
+              <th>To</th>
+              <th data-sort="trip_distance" class="num">Miles</th>
+              <th data-sort="trip_duration_min" class="num">Minutes</th>
+              <th data-sort="avg_speed_mph" class="num">mph</th>
+              <th data-sort="fare_amount" class="num">Fare</th>
+              <th data-sort="fare_per_mile" class="num">$/mi</th>
+              <th data-sort="tip_pct" class="num">Tip %</th>
+              <th data-sort="total_amount" class="num">Total</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="pager">
+          <button class="btn ghost" id="prev-page" type="button">← Prev</button>
+          <span id="page-label"></span>
+          <button class="btn ghost" id="next-page" type="button">Next →</button>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <!-- Selected trip details -->
+  <dialog id="trip-modal">
+    <div class="modal-head">
+      <h2>Trip details</h2>
+      <button class="btn ghost" id="close-modal" type="button" aria-label="Close">✕</button>
+    </div>
+    <div id="trip-detail"></div>
+  </dialog>
+
+  <div id="tooltip" class="tooltip" role="tooltip" hidden></div>
+
+  <!-- Load libraries first, then the dashboard scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/filters.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/table.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

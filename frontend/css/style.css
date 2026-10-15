@@ -1,0 +1,598 @@
+/* Shared colors and sizes for the light theme. */
+:root {
+  color-scheme: light;
+  --page: #f9f9f7;
+  --surface: #fcfcfb;
+  --text: #0b0b0b;
+  --text-2: #52514e;
+  --muted: #898781;
+  --grid: #e1e0d9;
+  --axis: #c3c2b7;
+  --border: rgba(11, 11, 11, 0.10);
+  --accent: #2a78d6;
+  --accent-ink: #ffffff;
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
+  --series-4: #eda100;
+  --series-5: #e87ba4;
+  --series-6: #008300;
+  --series-7: #6250d6;
+  --series-8: #e34948;
+  --seq-empty: #f0efec;
+  --critical: #d03b3b;
+  --warning: #b07a00;
+  --radius: 10px;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* Use the system theme unless the user chooses light mode. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --page: #0d0d0d;
+    --surface: #1a1a19;
+    --text: #f0efec;
+    --text-2: #c3c2b7;
+    --muted: #898781;
+    --grid: #2c2c2a;
+    --axis: #383835;
+    --border: rgba(255, 255, 255, 0.10);
+    --accent: #3987e5;
+    --accent-ink: #0d0d0d;
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --series-3: #199e70;
+    --series-4: #c98500;
+    --series-5: #d55181;
+    --series-6: #008300;
+    --series-7: #9085e9;
+    --series-8: #e66767;
+    --seq-empty: #2c2c2a;
+    --warning: #fab219;
+  }
+}
+
+/* Colors for the manually selected dark theme. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #0d0d0d;
+  --surface: #1a1a19;
+  --text: #f0efec;
+  --text-2: #c3c2b7;
+  --muted: #898781;
+  --grid: #2c2c2a;
+  --axis: #383835;
+  --border: rgba(255, 255, 255, 0.10);
+  --accent: #3987e5;
+  --accent-ink: #0d0d0d;
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --series-4: #c98500;
+  --series-5: #d55181;
+  --series-6: #008300;
+  --series-7: #9085e9;
+  --series-8: #e66767;
+  --seq-empty: #2c2c2a;
+  --warning: #fab219;
+}
+
+/* Basic page styles. */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+h1 {
+  font-size: 20px;
+  margin: 0;
+}
+
+h2 {
+  font-size: 15px;
+  margin: 0 0 2px;
+}
+
+.subtitle, .note {
+  color: var(--text-2);
+  margin: 0;
+  font-size: 13px;
+}
+
+/* Header and filter form. */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  align-items: flex-end;
+  padding: 14px 24px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 1100;
+}
+
+.filters label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-2);
+}
+
+.filters label.check {
+  flex-direction: row;
+  align-items: center;
+  padding-bottom: 8px;
+}
+
+.filters .pair {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--muted);
+}
+
+.filters .pair input {
+  width: 64px;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+/* Form controls and buttons. */
+input, select {
+  font: inherit;
+  color: var(--text);
+  background: var(--page);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 8px;
+}
+
+.btn {
+  font: inherit;
+  border-radius: 6px;
+  padding: 6px 14px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+}
+
+.btn.primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: transparent;
+}
+
+.btn.ghost {
+  background: transparent;
+  color: var(--text);
+}
+
+.btn:hover {
+  filter: brightness(1.08);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* Dashboard spacing, summary tiles, and cards. */
+main {
+  padding: 20px 24px 40px;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.kpi {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+}
+
+.kpi .label {
+  color: var(--text-2);
+  font-size: 12px;
+}
+
+.kpi .value {
+  font-size: 24px;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  min-width: 0;
+}
+
+.span-2 {
+  grid-column: span 2;
+}
+
+.card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.inline {
+  display: flex;
+  gap: 6px;
+}
+
+.chart-box {
+  position: relative;
+  height: 280px;
+}
+
+/* Map, selected zone, and legend. */
+.map-wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 240px;
+  gap: 12px;
+}
+
+#map {
+  height: 460px;
+  border-radius: 8px;
+  background: var(--page);
+}
+
+.zone-detail {
+  border-left: 1px solid var(--border);
+  padding-left: 12px;
+}
+
+.zone-detail h3 {
+  margin: 0 0 4px;
+  font-size: 15px;
+}
+
+.zone-detail dl {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 4px 12px;
+  margin: 8px 0 0;
+}
+
+.zone-detail dt {
+  color: var(--text-2);
+}
+
+.zone-detail dd {
+  margin: 0;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.legend-ramp {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--text-2);
+}
+
+.legend-ramp .bar {
+  height: 10px;
+  width: 220px;
+  border-radius: 4px;
+}
+
+/* Weekday and hour heatmap. */
+.heatmap {
+  display: grid;
+  grid-template-columns: 40px repeat(24, minmax(0, 1fr));
+  gap: 2px;
+  font-size: 11px;
+}
+
+.heatmap .cell {
+  height: 26px;
+  border-radius: 3px;
+}
+
+.heatmap .rowlab, .heatmap .collab {
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+}
+
+.heatmap .collab {
+  justify-content: center;
+}
+
+/* Top-zone ranking. */
+.rank-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rank-list li {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--grid);
+}
+
+.rank-list .pos {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.rank-list .name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rank-list .name small {
+  color: var(--text-2);
+  margin-left: 6px;
+}
+
+.rank-list .bar {
+  height: 6px;
+  border-radius: 0 4px 4px 0;
+  background: var(--series-1);
+  margin-top: 4px;
+}
+
+.rank-list .val {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+/* Trip tables and page controls. */
+.table-scroll {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.data-table th, .data-table td {
+  padding: 7px 8px;
+  border-bottom: 1px solid var(--grid);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.data-table th {
+  color: var(--text-2);
+  font-weight: 600;
+}
+
+.data-table th[data-sort] {
+  cursor: pointer;
+  user-select: none;
+}
+
+.data-table th[data-sort]:hover {
+  color: var(--text);
+}
+
+.data-table th.sorted::after {
+  content: " ▾";
+}
+
+.data-table th.sorted.asc::after {
+  content: " ▴";
+}
+
+.data-table .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.data-table tbody tr {
+  cursor: pointer;
+}
+
+.data-table tbody tr:hover {
+  background: var(--page);
+}
+
+.data-table.compact tbody tr {
+  cursor: default;
+}
+
+.flag {
+  color: var(--warning);
+  font-weight: 600;
+}
+
+.pager {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+  color: var(--text-2);
+}
+
+/* Data quality bars. */
+.quality-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 120px 70px;
+  gap: 8px;
+  align-items: center;
+  padding: 4px 0;
+  font-size: 13px;
+}
+
+.quality-row .track {
+  height: 8px;
+  background: var(--seq-empty);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.quality-row .fill {
+  height: 100%;
+  border-radius: 0 4px 4px 0;
+}
+
+.quality-row .count {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.quality h3 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  margin: 12px 0 4px;
+}
+
+/* Trip details dialog. */
+dialog {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  width: min(560px, calc(100vw - 32px));
+  padding: 16px;
+}
+
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.modal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 16px;
+  margin: 0;
+}
+
+.detail-grid dt {
+  color: var(--text-2);
+}
+
+.detail-grid dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Tooltip, errors, and loading feedback. */
+.tooltip {
+  position: fixed;
+  pointer-events: none;
+  z-index: 2000;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.error {
+  color: var(--critical);
+}
+
+.loading {
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+
+/* Layout for tablets and smaller screens. */
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .span-2 {
+    grid-column: auto;
+  }
+  .map-wrap {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .zone-detail {
+    border-left: 0;
+    padding-left: 0;
+  }
+  #map {
+    height: 360px;
+  }
+}
+
+/* Layout for phones. */
+@media (max-width: 600px) {
+  .topbar, .filters, main {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .filters {
+    position: static;
+  }
+  .filter-actions {
+    margin-left: 0;
+  }
+  .heatmap {
+    font-size: 9px;
+    grid-template-columns: 28px repeat(24, minmax(0, 1fr));
+  }
+  .heatmap .cell {
+    height: 18px;
+  }
+}
