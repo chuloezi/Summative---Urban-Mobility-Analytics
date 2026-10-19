@@ -4,7 +4,7 @@ A full-stack application for exploring New York City yellow taxi trips. Raw TLC 
 
 ## Video Walkthrough
 
-▶️ **[Watch the 5-minute walkthrough](VIDEO_LINK_HERE)**
+https://drive.google.com/file/d/1qfhyx0VWXB6wHcrm9dLQxX3MAkQ_ctY9/view?usp=sharing
 
 ---
 
@@ -218,6 +218,3 @@ Team task allocation and meeting log: [`docs/CTRL Freaks.pdf`](docs/CTRL%20Freak
 
 ## PDF Documentation report link
 https://drive.google.com/file/d/1U0DS5nUOvkglICVuzUoWOOzryY0IZKqi/view?usp=sharing
-
-## Walthrough video link
-https://drive.google.com/file/d/1qfhyx0VWXB6wHcrm9dLQxX3MAkQ_ctY9/view?usp=sharing
