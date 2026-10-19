@@ -218,3 +218,6 @@ Team task allocation and meeting log: [`docs/CTRL Freaks.pdf`](docs/CTRL%20Freak
 
 ## PDF Documentation report link
 https://drive.google.com/file/d/1U0DS5nUOvkglICVuzUoWOOzryY0IZKqi/view?usp=sharing
+
+## Walthrough video link
+https://drive.google.com/file/d/1qfhyx0VWXB6wHcrm9dLQxX3MAkQ_ctY9/view?usp=sharing
